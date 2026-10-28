@@ -14,14 +14,50 @@ checking drive space, and exporting CSV reports.
 | Alerts | Warning below a configurable free-space percentage |
 | Export | Separate computer and drive CSV reports |
 
-## Run
+## Download and Run
 
-Requires Windows, PowerShell with `Get-CimInstance`, and permission
-to execute the script and write reports.
+Requires Windows, PowerShell with `Get-CimInstance`, permission
+to execute scripts, and write access to the project folder.
+Git and a code editor are not required.
+
+1. Select **Code → Download ZIP** on this repository.
+2. Extract the ZIP.
+3. Open the folder containing `Get-SystemInventory.ps1`.
+4. In File Explorer's address bar, type `powershell` and press Enter.
+5. Run:
 
 ```powershell
 .\Get-SystemInventory.ps1
 ```
+
+The script checks the computer where it runs.
+
+### If the downloaded script is blocked
+
+Windows may mark downloaded scripts as coming from the internet.
+If PowerShell reports that the script is not digitally signed,
+check the active execution policy:
+
+```powershell
+Get-ExecutionPolicy
+```
+
+| Policy | Next step |
+| --- | --- |
+| `RemoteSigned` | Review the script, then unblock this file using the command below |
+| `AllSigned` | A trusted digital signature is required; follow your organization's process |
+| `Restricted` | Script execution is disabled; follow your organization's process |
+
+Under `RemoteSigned`, after reviewing and trusting the script, run:
+
+```powershell
+Unblock-File -Path ".\Get-SystemInventory.ps1"
+.\Get-SystemInventory.ps1
+```
+
+Unblocking removes the downloaded-file marker from this file.
+It does not change the execution policy and normally only needs
+to be done once per downloaded copy.
 
 ## Daily IT Use
 
@@ -31,7 +67,7 @@ to execute the script and write reports.
 | Computer runs slowly | Check hardware specifications and low disk space |
 | Workstation handover | Save a hardware and operating-system inventory |
 | Upgrade planning | Compare RAM and storage with application requirements |
-| USB file transfer | Check the connected drive’s filesystem and free space |
+| USB file transfer | Check the connected drive's filesystem and free space |
 | Support ticket | Attach CSV reports for another technician |
 
 ## Example Output
@@ -51,9 +87,12 @@ Fictional drive data with a 20% warning threshold:
 | `reports/computer-inventory.csv` | CPU, memory, and Windows details |
 | `reports/drive-inventory.csv` | One row per detected drive volume |
 
+The reports folder is created beside the script.
 Reports use UTF-8 and the regional CSV separator.
 Each run overwrites the previous reports.
-The `reports` folder is excluded from Git.
+
+Open them in a CSV reader such as Excel. Review machine-specific
+details before sharing. Generated reports are excluded from Git.
 
 ## Configuration
 
@@ -62,6 +101,8 @@ Change the warning threshold inside the script:
 ```powershell
 $minimumFreePercent = 20
 ```
+
+A warning appears when free space is below this percentage.
 
 ## Limitations
 
@@ -72,3 +113,12 @@ $minimumFreePercent = 20
 - `OK` indicates sufficient free space, not disk health.
 - No live performance monitoring; single-CPU reporting.
 - System-query error handling is limited.
+
+## Validation
+
+Manually tested on Windows 11 Pro with three drive volumes.
+Both CSV reports were exported and successfully imported into PowerShell.
+
+## License
+
+Licensed under the [MIT License](LICENSE).
